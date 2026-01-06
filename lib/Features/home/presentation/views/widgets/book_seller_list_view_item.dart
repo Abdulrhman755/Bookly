@@ -6,8 +6,8 @@ import 'package:go_router/go_router.dart';
 import '../../../../../core/utils/assets.dart';
 import '../../../../../core/utils/styles.dart';
 
-class BestSellerListViewItem extends StatelessWidget {
-  const BestSellerListViewItem({super.key});
+class BookSellerListViewItem extends StatelessWidget {
+  const BookSellerListViewItem({super.key});
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
