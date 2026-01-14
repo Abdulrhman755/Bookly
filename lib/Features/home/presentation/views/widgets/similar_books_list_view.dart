@@ -14,7 +14,10 @@ class SimilarBooksListView extends StatelessWidget {
         itemBuilder: (context, index) {
           return const Padding(
             padding: EdgeInsets.symmetric(horizontal: 5),
-            child: CustomBookImage(),
+            child: CustomBookImage(
+              imageUrl:
+                  'https://img.freepik.com/free-vector/vector-blank-book-cover-isolated-white_1284-41904.jpg?t=st=1736846227~exp=1736849827~hmac=62174f762635951662cf065f422709146f4772076046e7279761f22497645168&w=740',
+            ),
           );
         },
       ),
