@@ -6,15 +6,19 @@ class CustomBookImage extends StatelessWidget {
   final String imageUrl;
   @override
   Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 2.6 / 4,
-      child: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: CachedNetworkImageProvider(imageUrl),
-            fit: BoxFit.fill,
-          ),
-          borderRadius: BorderRadius.circular(16),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: AspectRatio(
+        aspectRatio: 2.6 / 4,
+        child: CachedNetworkImage(
+          imageUrl: imageUrl,
+          fit: BoxFit.fill,
+          // placeholder: (context, url) {
+          //   return const Center(child: CircularProgressIndicator());
+          // },
+          errorWidget: (context, error, stackTrace) {
+            return const Icon(Icons.error);
+          },
         ),
       ),
     );
