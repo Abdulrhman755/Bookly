@@ -1,3 +1,4 @@
+import 'package:bookly/Features/home/data/models/book_model/book_model.dart';
 import 'package:bookly/Features/home/presentation/views/widgets/book_rating.dart';
 import 'package:bookly/Features/home/presentation/views/widgets/books_action.dart';
 import 'package:bookly/Features/home/presentation/views/widgets/custom_book_details_app_bar.dart';
@@ -7,8 +8,8 @@ import 'package:bookly/core/utils/styles.dart';
 import 'package:flutter/material.dart';
 
 class BookDetailsViewBody extends StatelessWidget {
-  const BookDetailsViewBody({super.key});
-
+  const BookDetailsViewBody({super.key, required this.bookModel});
+  final BookModel bookModel;
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
@@ -23,28 +24,34 @@ class BookDetailsViewBody extends StatelessWidget {
                 const CustomBookDetailsAppBar(),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: width * 0.17),
-                  child: const CustomBookImage(
-                    imageUrl:
-                        'https://img.freepik.com/free-vector/vector-blank-book-cover-isolated-white_1284-41904.jpg?t=st=1736846227~exp=1736849827~hmac=62174f762635951662cf065f422709146f4772076046e7279761f22497645168&w=740',
+                  child: CustomBookImage(
+                    imageUrl: bookModel.volumeInfo.imageLinks.thumbnail,
                   ),
                 ),
                 const SizedBox(height: 43),
-                const Text('The Jungle Book', style: Styles.textStyle30),
+                Text(
+                  bookModel.volumeInfo.title ?? '',
+                  style: Styles.textStyle30.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
                 const SizedBox(height: 6),
                 Text(
-                  'Rudyard Kipling',
+                  bookModel.volumeInfo.authors?[0] ?? '',
                   style: Styles.textStyle18.copyWith(
                     fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
                 const SizedBox(height: 16),
-                const BookRating(
+                BookRating(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  rating: 0,
-                  ratingCount: 0,
+                  rating: (bookModel.volumeInfo.averageRating ?? 0).toDouble(),
+                  ratingCount: bookModel.volumeInfo.ratingsCount ?? 0,
                 ),
                 const SizedBox(height: 37),
-                const BooksAction(),
+                BooksAction(bookModel: bookModel),
                 Expanded(child: const SizedBox(height: 50)),
                 Align(
                   alignment: Alignment.centerLeft,
