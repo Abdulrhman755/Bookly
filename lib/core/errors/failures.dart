@@ -29,6 +29,8 @@ class ServerFailure extends Failure {
       } else {
         return ServerFailure('Unknown error , Please try again later!');
       }
+    } else if (exception.type == DioExceptionType.connectionError) {
+      return ServerFailure('No internet connection');
     } else {
       return ServerFailure('Server failure');
     }
