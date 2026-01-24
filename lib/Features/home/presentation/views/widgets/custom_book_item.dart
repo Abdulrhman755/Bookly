@@ -14,7 +14,7 @@ class CustomBookImage extends StatelessWidget {
         child: Hero(
           tag: heroTag ?? imageUrl ?? '',
           child:
-              imageUrl == null
+              (imageUrl == null || imageUrl!.isEmpty)
                   ? const Center(child: Icon(Icons.error))
                   : CachedNetworkImage(
                     imageUrl: imageUrl!,

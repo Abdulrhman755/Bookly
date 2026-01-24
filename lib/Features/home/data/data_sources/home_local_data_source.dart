@@ -6,6 +6,7 @@ abstract class HomeLocalDataSource {
   List<BookModel> fetchFeaturedBooks();
   List<BookModel> fetchNewestBooks();
   void saveBooks(List<BookModel> books, String boxName);
+  void clearBox(String boxName);
 }
 
 class HomeLocalDataSourceImpl extends HomeLocalDataSource {
@@ -25,5 +26,11 @@ class HomeLocalDataSourceImpl extends HomeLocalDataSource {
   void saveBooks(List<BookModel> books, String boxName) {
     var box = Hive.box<BookModel>(boxName);
     box.addAll(books);
+  }
+
+  @override
+  void clearBox(String boxName) {
+    var box = Hive.box<BookModel>(boxName);
+    box.clear();
   }
 }

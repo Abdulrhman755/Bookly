@@ -19,10 +19,6 @@ class HomeRepoImpl implements HomeRepo {
     String category = 'Computer Science',
   }) async {
     try {
-      List<BookModel> booksList = homeLocalDataSource.fetchNewestBooks();
-      if (booksList.isNotEmpty) {
-        return Right(booksList);
-      }
       var data = await apiService.get(
         endpoint:
             'volumes?Filtering=free-ebooks&orderBy=newest&q=$category&startIndex=${pageNumber * 10}',
@@ -33,9 +29,19 @@ class HomeRepoImpl implements HomeRepo {
           books.add(BookModel.fromJson(item));
         }
       }
-      homeLocalDataSource.saveBooks(books, kNewestBox);
+      if (pageNumber == 0) {
+        homeLocalDataSource.clearBox(kNewestBox);
+        homeLocalDataSource.saveBooks(books, kNewestBox);
+      }
       return Right(books);
     } catch (e) {
+      if (pageNumber == 0) {
+        // Fallback to cache on error only for first page
+        List<BookModel> booksList = homeLocalDataSource.fetchNewestBooks();
+        if (booksList.isNotEmpty) {
+          return Right(booksList);
+        }
+      }
       if (e is DioException) {
         return Left(ServerFailure.fromDioException(e));
       }
@@ -46,10 +52,6 @@ class HomeRepoImpl implements HomeRepo {
   @override
   Future<Either<Failure, List<BookModel>>> fetchFeaturedBooks() async {
     try {
-      List<BookModel> booksList = homeLocalDataSource.fetchFeaturedBooks();
-      if (booksList.isNotEmpty) {
-        return Right(booksList);
-      }
       List<String> categories = [
         'Programming',
         'Artificial Intelligence',
@@ -66,11 +68,22 @@ class HomeRepoImpl implements HomeRepo {
           books.add(BookModel.fromJson(item));
         }
       }
+      homeLocalDataSource.clearBox(kFeaturedBox);
       homeLocalDataSource.saveBooks(books, kFeaturedBox);
       return Right(books);
     } catch (e) {
       if (e is DioException) {
+        // Fallback to cache on error
+        List<BookModel> booksList = homeLocalDataSource.fetchFeaturedBooks();
+        if (booksList.isNotEmpty) {
+          return Right(booksList);
+        }
         return Left(ServerFailure.fromDioException(e));
+      }
+      // Fallback to cache on error
+      List<BookModel> booksList = homeLocalDataSource.fetchFeaturedBooks();
+      if (booksList.isNotEmpty) {
+        return Right(booksList);
       }
       return Left(ServerFailure(e.toString()));
     }
