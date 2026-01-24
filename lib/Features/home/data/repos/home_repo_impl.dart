@@ -10,15 +10,20 @@ class HomeRepoImpl implements HomeRepo {
   HomeRepoImpl(this.apiService);
 
   @override
-  Future<Either<Failure, List<BookModel>>> fetchNewestBooks() async {
+  Future<Either<Failure, List<BookModel>>> fetchNewestBooks({
+    int pageNumber = 0,
+    String category = 'Computer Science',
+  }) async {
     try {
       var data = await apiService.get(
         endpoint:
-            'volumes?Filtering=free-ebooks&orderBy=newest&q=computer science',
+            'volumes?Filtering=free-ebooks&orderBy=newest&q=$category&startIndex=${pageNumber * 10}',
       );
       List<BookModel> books = [];
-      for (var item in data['items']) {
-        books.add(BookModel.fromJson(item));
+      if (data['items'] != null) {
+        for (var item in data['items']) {
+          books.add(BookModel.fromJson(item));
+        }
       }
       return Right(books);
     } catch (e) {
@@ -31,13 +36,22 @@ class HomeRepoImpl implements HomeRepo {
 
   @override
   Future<Either<Failure, List<BookModel>>> fetchFeaturedBooks() async {
+    List<String> categories = [
+      'Programming',
+      'Artificial Intelligence',
+      'Data Science',
+      'Cyber Security',
+    ];
+    categories.shuffle();
     try {
       var data = await apiService.get(
-        endpoint: 'volumes?Filtering=free-ebooks&q=subject:Programming',
+        endpoint: 'volumes?Filtering=free-ebooks&q=subject:${categories.first}',
       );
       List<BookModel> books = [];
-      for (var item in data['items']) {
-        books.add(BookModel.fromJson(item));
+      if (data['items'] != null) {
+        for (var item in data['items']) {
+          books.add(BookModel.fromJson(item));
+        }
       }
       return Right(books);
     } catch (e) {
@@ -54,11 +68,13 @@ class HomeRepoImpl implements HomeRepo {
   }) async {
     try {
       var data = await apiService.get(
-        endpoint: 'volumes?Filtering=free-ebooks&q=$category&orting=relevance',
+        endpoint: 'volumes?Filtering=free-ebooks&q=$category&sorting=relevance',
       );
       List<BookModel> books = [];
-      for (var item in data['items']) {
-        books.add(BookModel.fromJson(item));
+      if (data['items'] != null) {
+        for (var item in data['items']) {
+          books.add(BookModel.fromJson(item));
+        }
       }
       return Right(books);
     } catch (e) {

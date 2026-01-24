@@ -14,10 +14,13 @@ class BooksAction extends StatelessWidget {
         children: [
           Expanded(
             child: CustomButton(
+              onPressed: () {
+                launchCustomUrl(context, bookModel.volumeInfo.previewLink);
+              },
               text: 'Free',
               backgroundColor: Colors.white,
               textColor: Colors.black,
-              borderRadius: BorderRadius.only(
+              borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(16),
                 bottomLeft: Radius.circular(16),
               ),

@@ -1,9 +1,10 @@
+import 'package:bookly/Features/home/presentation/views/widgets/best_seller_list_view_loading_indicator.dart';
 import 'package:bookly/core/widgets/custom_error_widget.dart';
-import 'package:bookly/core/widgets/custom_loading_indicator.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bookly/Features/home/presentation/manager/cubit/newest_books_cubit.dart';
-import 'book_seller_list_view_item.dart';
+import 'book_list_view_item.dart';
 
 class BestSellerListView extends StatelessWidget {
   const BestSellerListView({super.key});
@@ -17,9 +18,7 @@ class BestSellerListView extends StatelessWidget {
             delegate: SliverChildBuilderDelegate((context, index) {
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
-                child: BookSellerListViewItem(
-                  bookModel: state.books[index],
-                ),
+                child: BookListViewItem(bookModel: state.books[index]),
               );
             }, childCount: state.books.length),
           );
@@ -28,7 +27,9 @@ class BestSellerListView extends StatelessWidget {
             child: CustomErrorWidget(errorMessage: state.errorMessage),
           );
         } else {
-          return SliverToBoxAdapter(child: const CustomLoadingIndicator());
+          return const SliverToBoxAdapter(
+            child: BestSellerListViewLoadingIndicator(),
+          );
         }
       },
     );

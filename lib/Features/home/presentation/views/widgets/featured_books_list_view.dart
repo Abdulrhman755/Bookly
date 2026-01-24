@@ -1,10 +1,11 @@
 import 'package:bookly/Features/home/presentation/views/widgets/custom_book_item.dart';
 import 'package:bookly/core/utils/app_router.dart';
 import 'package:bookly/core/widgets/custom_error_widget.dart';
-import 'package:bookly/core/widgets/custom_loading_indicator.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bookly/Features/home/presentation/manager/cubit/featured_books_cubit.dart';
+import 'package:bookly/Features/home/presentation/views/widgets/featured_books_list_view_loading_indicator.dart';
 import 'package:go_router/go_router.dart';
 
 class FeaturedBooksListView extends StatelessWidget {
@@ -28,12 +29,17 @@ class FeaturedBooksListView extends StatelessWidget {
                     onTap: () {
                       GoRouter.of(context).push(
                         AppRouter.bookDetailsRoute,
-                        extra: state.books[index],
+                        extra: {
+                          'book': state.books[index],
+                          'heroTag': 'featured_${state.books[index].id}',
+                        },
                       );
                     },
                     child: CustomBookImage(
+                      heroTag: 'featured_${state.books[index].id}',
                       imageUrl:
-                          state.books[index].volumeInfo.imageLinks.thumbnail,
+                          state.books[index].volumeInfo.imageLinks?.thumbnail ??
+                          '',
                     ),
                   ),
                 );
@@ -43,7 +49,7 @@ class FeaturedBooksListView extends StatelessWidget {
         } else if (state is FeaturedBooksFailure) {
           return CustomErrorWidget(errorMessage: state.errorMessage);
         } else {
-          return const CustomLoadingIndicator();
+          return const FeaturedBooksListViewLoadingIndicator();
         }
       },
     );

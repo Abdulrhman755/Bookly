@@ -8,8 +8,9 @@ import 'package:bookly/core/utils/styles.dart';
 import 'package:flutter/material.dart';
 
 class BookDetailsViewBody extends StatelessWidget {
-  const BookDetailsViewBody({super.key, required this.bookModel});
+  const BookDetailsViewBody({super.key, required this.bookModel, this.heroTag});
   final BookModel bookModel;
+  final Object? heroTag;
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
@@ -25,7 +26,9 @@ class BookDetailsViewBody extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: width * 0.17),
                   child: CustomBookImage(
-                    imageUrl: bookModel.volumeInfo.imageLinks.thumbnail,
+                    heroTag:
+                        heroTag ?? bookModel.volumeInfo.imageLinks?.thumbnail,
+                    imageUrl: bookModel.volumeInfo.imageLinks?.thumbnail ?? '',
                   ),
                 ),
                 const SizedBox(height: 43),
@@ -64,7 +67,7 @@ class BookDetailsViewBody extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                const SimilarBooksListView(),
+                SimilarBooksListView(parentId: bookModel.id!),
                 const SizedBox(height: 40),
               ],
             ),

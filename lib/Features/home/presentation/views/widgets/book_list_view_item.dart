@@ -7,21 +7,25 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/utils/styles.dart';
 
-class BookSellerListViewItem extends StatelessWidget {
-  const BookSellerListViewItem({super.key, required this.bookModel});
+class BookListViewItem extends StatelessWidget {
+  const BookListViewItem({super.key, required this.bookModel});
   final BookModel bookModel;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        GoRouter.of(context).push(AppRouter.bookDetailsRoute, extra: bookModel);
+        GoRouter.of(context).push(
+          AppRouter.bookDetailsRoute,
+          extra: {'book': bookModel, 'heroTag': 'list_${bookModel.id}'},
+        );
       },
       child: SizedBox(
         height: 130,
         child: Row(
           children: [
             CustomBookImage(
-              imageUrl: bookModel.volumeInfo.imageLinks.thumbnail,
+              heroTag: 'list_${bookModel.id}',
+              imageUrl: bookModel.volumeInfo.imageLinks?.thumbnail ?? '',
             ),
             const SizedBox(width: 30),
             Expanded(
@@ -46,6 +50,8 @@ class BookSellerListViewItem extends StatelessWidget {
                         ? bookModel.volumeInfo.authors![0]
                         : 'Unknown Author',
                     style: Styles.textStyle14,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 3),
                   Row(

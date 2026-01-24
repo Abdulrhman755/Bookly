@@ -23,14 +23,18 @@ abstract class AppRouter {
       GoRoute(path: homeRoute, builder: (context, state) => const HomeView()),
       GoRoute(
         path: bookDetailsRoute,
-        builder:
-            (context, state) => BlocProvider(
-              create:
-                  (context) =>
-                      SimilarBooksCubit(GetIt.instance.get<HomeRepoImpl>())
-                        ..fetchSimilarBooks(category: 'programming'),
-              child: BookDetailsView(bookModel: state.extra as BookModel),
-            ),
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>;
+          final bookModel = extra['book'] as BookModel;
+          final heroTag = extra['heroTag'];
+          return BlocProvider(
+            create:
+                (context) =>
+                    SimilarBooksCubit(GetIt.instance.get<HomeRepoImpl>())
+                      ..fetchSimilarBooks(category: 'programming'),
+            child: BookDetailsView(bookModel: bookModel, heroTag: heroTag),
+          );
+        },
       ),
       GoRoute(
         path: searchRoute,

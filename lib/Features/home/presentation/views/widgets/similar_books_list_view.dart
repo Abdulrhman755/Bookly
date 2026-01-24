@@ -4,10 +4,12 @@ import 'package:bookly/core/widgets/custom_loading_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bookly/Features/home/presentation/views/widgets/custom_book_item.dart';
+import 'package:bookly/core/utils/app_router.dart';
+import 'package:go_router/go_router.dart';
 
 class SimilarBooksListView extends StatelessWidget {
-  const SimilarBooksListView({super.key});
-
+  const SimilarBooksListView({super.key, required this.parentId});
+  final String parentId;
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SimilarBooksCubit, SimilarBooksState>(
@@ -21,9 +23,23 @@ class SimilarBooksListView extends StatelessWidget {
               itemBuilder: (context, index) {
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 5),
-                  child: CustomBookImage(
-                    imageUrl:
-                        state.books[index].volumeInfo.imageLinks.thumbnail,
+                  child: GestureDetector(
+                    onTap: () {
+                      GoRouter.of(context).push(
+                        AppRouter.bookDetailsRoute,
+                        extra: {
+                          'book': state.books[index],
+                          'heroTag':
+                              'similar_${parentId}_${state.books[index].id}',
+                        },
+                      );
+                    },
+                    child: CustomBookImage(
+                      heroTag: 'similar_${parentId}_${state.books[index].id}',
+                      imageUrl:
+                          state.books[index].volumeInfo.imageLinks?.thumbnail ??
+                          '',
+                    ),
                   ),
                 );
               },

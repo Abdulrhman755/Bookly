@@ -3,7 +3,12 @@ import 'package:bookly/core/errors/failures.dart';
 import 'package:dartz/dartz.dart';
 
 abstract class HomeRepo {
-  Future<Either<Failure, List<BookModel>>> fetchNewestBooks();
+  Future<Either<Failure, List<BookModel>>> fetchNewestBooks({
+    int pageNumber = 0,
+    String category = 'Computer Science',
+  });
   Future<Either<Failure, List<BookModel>>> fetchFeaturedBooks();
-  Future<Either<Failure, List<BookModel>>> fetchSimilarBooks({required String category});
+  Future<Either<Failure, List<BookModel>>> fetchSimilarBooks({
+    required String category,
+  });
 }
