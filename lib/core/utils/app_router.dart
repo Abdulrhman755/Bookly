@@ -1,4 +1,3 @@
-import 'package:bookly/constants.dart';
 import 'package:bookly/Features/home/presentation/views/book_details_view.dart';
 import 'package:bookly/Features/home/presentation/views/home_view.dart';
 import 'package:bookly/Features/search/presentation/views/search_view.dart';
@@ -6,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:bookly/Features/home/data/models/book_model/book_model.dart';
 import 'package:bookly/Features/home/data/repos/home_repo_impl.dart';
 import 'package:bookly/Features/home/presentation/manager/cubit/similar_books_cubit.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import '../../Features/Splash/presentation/views/splash_view.dart';
@@ -22,77 +20,29 @@ abstract class AppRouter {
         path: splashRoute,
         builder: (context, state) => const SplashView(),
       ),
-      GoRoute(
-        path: homeRoute,
-        pageBuilder: (context, state) {
-          return CustomTransitionPage(
-            key: state.pageKey,
-            child: const HomeView(),
-            transitionsBuilder: (
-              context,
-              animation,
-              secondaryAnimation,
-              child,
-            ) {
-              return FadeTransition(
-                opacity: CurveTween(curve: Curves.easeIn).animate(animation),
-                child: child,
-              );
-            },
-            transitionDuration: ktransitionDuration,
-          );
-        },
-      ),
+      GoRoute(path: homeRoute, builder: (context, state) => const HomeView()),
       GoRoute(
         path: bookDetailsRoute,
-        pageBuilder: (context, state) {
+        builder: (context, state) {
           final extra = state.extra as Map<String, dynamic>;
           final bookModel = extra['book'] as BookModel;
           final heroTag = extra['heroTag'];
-          return CustomTransitionPage(
-            key: state.pageKey,
-            child: BlocProvider(
-              create:
-                  (context) =>
-                      SimilarBooksCubit(GetIt.instance.get<HomeRepoImpl>())
-                        ..fetchSimilarBooks(category: 'programming'),
-              child: BookDetailsView(bookModel: bookModel, heroTag: heroTag),
-            ),
-            transitionsBuilder: (
-              context,
-              animation,
-              secondaryAnimation,
-              child,
-            ) {
-              return FadeTransition(
-                opacity: CurveTween(curve: Curves.easeIn).animate(animation),
-                child: child,
-              );
-            },
-            transitionDuration: ktransitionDuration,
+          return BlocProvider(
+            create:
+                (context) =>
+                    SimilarBooksCubit(GetIt.instance.get<HomeRepoImpl>())
+                      ..fetchSimilarBooks(
+                        category:
+                            bookModel.volumeInfo.categories?.first ??
+                            'computer science',
+                      ),
+            child: BookDetailsView(bookModel: bookModel, heroTag: heroTag),
           );
         },
       ),
       GoRoute(
         path: searchRoute,
-        pageBuilder: (context, state) {
-          return CustomTransitionPage(
-            key: state.pageKey,
-            child: const SearchView(),
-            transitionsBuilder: (
-              context,
-              animation,
-              secondaryAnimation,
-              child,
-            ) {
-              return FadeTransition(
-                opacity: CurveTween(curve: Curves.easeIn).animate(animation),
-                child: child,
-              );
-            },
-            transitionDuration: ktransitionDuration,
-          );
-        },
+        builder: (context, state) => const SearchView(),
       ),
     ],
   );

@@ -30,8 +30,16 @@ class HomeRepoImpl implements HomeRepo {
         }
       }
       if (pageNumber == 0) {
-        homeLocalDataSource.clearBox(kNewestBox);
-        homeLocalDataSource.saveBooks(books, kNewestBox);
+        if (books.isNotEmpty) {
+          homeLocalDataSource.clearBox(kNewestBox);
+          homeLocalDataSource.saveBooks(books, kNewestBox);
+        } else {
+          // Fallback to cache if API returns empty list for first page
+          List<BookModel> booksList = homeLocalDataSource.fetchNewestBooks();
+          if (booksList.isNotEmpty) {
+            return Right(booksList);
+          }
+        }
       }
       return Right(books);
     } catch (e) {
@@ -68,9 +76,18 @@ class HomeRepoImpl implements HomeRepo {
           books.add(BookModel.fromJson(item));
         }
       }
-      homeLocalDataSource.clearBox(kFeaturedBox);
-      homeLocalDataSource.saveBooks(books, kFeaturedBox);
-      return Right(books);
+      if (books.isNotEmpty) {
+        homeLocalDataSource.clearBox(kFeaturedBox);
+        homeLocalDataSource.saveBooks(books, kFeaturedBox);
+        return Right(books);
+      } else {
+        // Fallback to cache if API returns empty list
+        List<BookModel> booksList = homeLocalDataSource.fetchFeaturedBooks();
+        if (booksList.isNotEmpty) {
+          return Right(booksList);
+        }
+        return Left(ServerFailure('No books found'));
+      }
     } catch (e) {
       if (e is DioException) {
         // Fallback to cache on error
