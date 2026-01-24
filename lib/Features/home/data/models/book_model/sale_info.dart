@@ -1,9 +1,17 @@
 import 'package:equatable/equatable.dart';
+import 'package:hive/hive.dart';
 
+part 'sale_info.g.dart';
+
+@HiveType(typeId: 6)
 class SaleInfo extends Equatable {
+  @HiveField(0)
   final String? country;
+  @HiveField(1)
   final String? saleability;
+  @HiveField(2)
   final bool? isEbook;
+  @HiveField(3)
   final String? buyLink;
 
   const SaleInfo({this.country, this.saleability, this.isEbook, this.buyLink});

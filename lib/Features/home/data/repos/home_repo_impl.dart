@@ -1,5 +1,7 @@
+import 'package:bookly/Features/home/data/data_sources/home_local_data_source.dart';
 import 'package:bookly/Features/home/data/models/book_model/book_model.dart';
 import 'package:bookly/Features/home/data/repos/home_repo.dart';
+import 'package:bookly/constants.dart';
 import 'package:bookly/core/errors/failures.dart';
 import 'package:bookly/core/utils/api_service.dart';
 import 'package:dartz/dartz.dart';
@@ -7,7 +9,9 @@ import 'package:dio/dio.dart';
 
 class HomeRepoImpl implements HomeRepo {
   final ApiService apiService;
-  HomeRepoImpl(this.apiService);
+  final HomeLocalDataSource homeLocalDataSource;
+
+  HomeRepoImpl({required this.apiService, required this.homeLocalDataSource});
 
   @override
   Future<Either<Failure, List<BookModel>>> fetchNewestBooks({
@@ -15,6 +19,10 @@ class HomeRepoImpl implements HomeRepo {
     String category = 'Computer Science',
   }) async {
     try {
+      List<BookModel> booksList = homeLocalDataSource.fetchNewestBooks();
+      if (booksList.isNotEmpty) {
+        return Right(booksList);
+      }
       var data = await apiService.get(
         endpoint:
             'volumes?Filtering=free-ebooks&orderBy=newest&q=$category&startIndex=${pageNumber * 10}',
@@ -25,6 +33,7 @@ class HomeRepoImpl implements HomeRepo {
           books.add(BookModel.fromJson(item));
         }
       }
+      homeLocalDataSource.saveBooks(books, kNewestBox);
       return Right(books);
     } catch (e) {
       if (e is DioException) {
@@ -36,14 +45,18 @@ class HomeRepoImpl implements HomeRepo {
 
   @override
   Future<Either<Failure, List<BookModel>>> fetchFeaturedBooks() async {
-    List<String> categories = [
-      'Programming',
-      'Artificial Intelligence',
-      'Data Science',
-      'Cyber Security',
-    ];
-    categories.shuffle();
     try {
+      List<BookModel> booksList = homeLocalDataSource.fetchFeaturedBooks();
+      if (booksList.isNotEmpty) {
+        return Right(booksList);
+      }
+      List<String> categories = [
+        'Programming',
+        'Artificial Intelligence',
+        'Data Science',
+        'Cyber Security',
+      ];
+      categories.shuffle();
       var data = await apiService.get(
         endpoint: 'volumes?Filtering=free-ebooks&q=subject:${categories.first}',
       );
@@ -53,6 +66,7 @@ class HomeRepoImpl implements HomeRepo {
           books.add(BookModel.fromJson(item));
         }
       }
+      homeLocalDataSource.saveBooks(books, kFeaturedBox);
       return Right(books);
     } catch (e) {
       if (e is DioException) {

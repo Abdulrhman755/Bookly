@@ -1,18 +1,32 @@
 import 'package:equatable/equatable.dart';
+import 'package:hive/hive.dart';
 
 import 'epub.dart';
 import 'pdf.dart';
 
+part 'access_info.g.dart';
+
+@HiveType(typeId: 7)
 class AccessInfo extends Equatable {
+  @HiveField(0)
   final String? country;
+  @HiveField(1)
   final String? viewability;
+  @HiveField(2)
   final bool? embeddable;
+  @HiveField(3)
   final bool? publicDomain;
+  @HiveField(4)
   final String? textToSpeechPermission;
+  @HiveField(5)
   final Epub? epub;
+  @HiveField(6)
   final Pdf? pdf;
+  @HiveField(7)
   final String? webReaderLink;
+  @HiveField(8)
   final String? accessViewStatus;
+  @HiveField(9)
   final bool? quoteSharingAllowed;
 
   const AccessInfo({

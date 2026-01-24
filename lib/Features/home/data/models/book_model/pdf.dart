@@ -1,6 +1,11 @@
 import 'package:equatable/equatable.dart';
+import 'package:hive/hive.dart';
 
+part 'pdf.g.dart';
+
+@HiveType(typeId: 10)
 class Pdf extends Equatable {
+  @HiveField(0)
   final bool? isAvailable;
 
   const Pdf({this.isAvailable});
